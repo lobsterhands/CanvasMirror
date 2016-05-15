@@ -50,8 +50,18 @@
       var mouse = myState.getMouse(e);
       mx = mouse.x;
       my = mouse.y;
+
+      // MirrorAction prototype
+        log('mirror across y-axis');
+        var diff = (canvas.width / 2) - mx;
+        var mirrorX = (canvas.width / 2) + diff;
+        var mirrorShape = myState.contains(mirrorX, my);
+        if (mirrorShape) {
+          myState.flipColor(myState.shapes[mirrorShape]);
+      }
+
       var shape = myState.contains(mx, my);
-      if (shape) {
+      if (shape != -1) {
         myState.flipColor(myState.shapes[shape]);
         drawSquares();
       }
@@ -61,14 +71,14 @@
   CanvasState.prototype.contains = function(x, y) {
     for (var i = 0; i < myState.shapes.length; i++) {
       if (myState.shapes[i] !== undefined) {
-        if (x >= myState.shapes[i].x && x < myState.shapes[i].x + 40) {
-          if (y >= myState.shapes[i].y && y < myState.shapes[i].y + 40) {
+        if (x >= myState.shapes[i].x && x < myState.shapes[i].x + gridSize) {
+          if (y >= myState.shapes[i].y && y < myState.shapes[i].y + gridSize) {
             return i;
           }
         }
       }
     }
-    return false;
+    return -1; // Error
   };
 
   CanvasState.prototype.getMouse = function(e) {
@@ -83,17 +93,20 @@
     }
   };
 
+  CanvasState.prototype.mirrorAction = function() {
+    // Detect change on any object, find its "mirror" object across the y-axis
+    // and affect the change there as well.
+  };
+
+
   function createSquares() {
-    var n = canvas.height;
-    var d = 10;
-    var m = n / d;
     var blackFill = "rgb(0,0,0)";
     var whiteFill = "rgb(255, 255, 255)";
     var count = 0;
-    for (var i = 0; i < n; i+=m) {
-      for (var j = 0; j < n; j+=m) {
+    for (var i = 0; i < canvasDim ; i+=gridSize) {
+      for (var j = 0; j < canvasDim; j+=gridSize) {
         ctx.fillStyle = (count % 2 == 0) ? blackFill : whiteFill;
-        myState.shapes[count] = new Square(i, j, m, m, ctx.fillStyle);
+        myState.shapes[count] = new Square(i, j, gridSize, gridSize, ctx.fillStyle);
         count++;
       }
       count++;
@@ -112,6 +125,8 @@
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
+  var canvasDim = canvas.width;
+  var gridSize = canvas.width/20;
   var myState = new CanvasState(canvas);
   createSquares();
   drawSquares();
