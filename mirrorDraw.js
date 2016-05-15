@@ -50,18 +50,26 @@
       var mouse = myState.getMouse(e);
       mx = mouse.x;
       my = mouse.y;
-      for (var i = 0; i < myState.shapes.length; i++) {
-        if (myState.shapes[i] !== undefined) {
-          if (mx >= myState.shapes[i].x && mx < myState.shapes[i].x + 40) {
-            if (my >= myState.shapes[i].y && my < myState.shapes[i].y + 40) {
-              myState.flipColor(myState.shapes[i]);
-              drawSquares();
-            }
-          }
-        }
+      var shape = myState.contains(mx, my);
+      if (shape) {
+        myState.flipColor(myState.shapes[shape]);
+        drawSquares();
       }
     });
   }
+
+  CanvasState.prototype.contains = function(x, y) {
+    for (var i = 0; i < myState.shapes.length; i++) {
+      if (myState.shapes[i] !== undefined) {
+        if (x >= myState.shapes[i].x && x < myState.shapes[i].x + 40) {
+          if (y >= myState.shapes[i].y && y < myState.shapes[i].y + 40) {
+            return i;
+          }
+        }
+      }
+    }
+    return false;
+  };
 
   CanvasState.prototype.getMouse = function(e) {
     return {x: e.offsetX, y: e.offsetY};
@@ -72,12 +80,6 @@
       shape.fillColor = "#ffffff";
     } else {
       shape.fillColor = "#000000";
-    }
-  };
-
-  CanvasState.prototype.contains = function(shape) {
-    if (shape !== undefined) {
-
     }
   };
 
@@ -110,7 +112,6 @@
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
-  // canvas.onclick = function() { alert('cclick'); };
   var myState = new CanvasState(canvas);
   createSquares();
   drawSquares();
