@@ -11,16 +11,20 @@
       console.log(arg);
   }
 
-  function Shape(x, y, w, h, fillColor) {
+  var myArray = [];
+
+  function Square(x, y, w, h, fillColor) {
     this.x = x || 0;
     this.y = y || 0;
     this.w = w || 1;
     this.h = h || 1;
     this.fillColor = fillColor || "#FF0000";
+
+    this.onclick = function() { alert('clicked')};
   }
 
-  Shape.prototype.draw = function(ctx) {
-    ctx.fillStyle = (count % 2 == 0) ? blackFill : whiteFill;
+  Square.prototype.draw = function(ctx) {
+    ctx.fillStyle = this.fillColor;
     ctx.fillRect(this.x, this.y, this.w, this.h);
   };
 
@@ -36,18 +40,12 @@
     var blackFill = "rgb(0,0,0)";
     var whiteFill = "rgb(255, 255, 255)";
     var count = 0;
-    var message;
-    // for (var i = 0; i < n; i+=m*3) { THIS is cool! stretches the pattern
     for (var i = 0; i < n; i+=m) {
       for (var j = 0; j < n; j+=m) {
-        message = i + "," + j + ": " + ctx.fillStyle;
-        log(message);
         ctx.fillStyle = (count % 2 == 0) ? blackFill : whiteFill;
-
-        // fillRect(x, y, width, height);
-        ctx.fillRect(i, j, m, m);
+        myArray[count] = new Square(i, j, m, m, ctx.fillStyle);
+        myArray[count].draw(ctx);
         count++;
-
       }
       count++;
     }
@@ -63,7 +61,7 @@
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
-  canvas.onclick = function() { alert('cclick'); };
+  // canvas.onclick = function() { alert('cclick'); };
   drawSquares();
 
 })();
