@@ -1,5 +1,6 @@
 /**
  * Created by Lyle Denman on 5/14/16.
+ * With lots of help from: www.simonsarris.com/blog/510-making-html5-canvas-useful
  */
 
 (function(){
@@ -11,29 +12,76 @@
       console.log(arg);
   }
 
-  var myArray = [];
-
+  /************************/
+  /***** Square class *****/
+  /************************/
   function Square(x, y, w, h, fillColor) {
     this.x = x || 0;
     this.y = y || 0;
     this.w = w || 1;
     this.h = h || 1;
     this.fillColor = fillColor || "#FF0000";
-
-    this.onclick = function() { alert('clicked')};
   }
 
   Square.prototype.draw = function(ctx) {
     ctx.fillStyle = this.fillColor;
     ctx.fillRect(this.x, this.y, this.w, this.h);
   };
+  /************************/
+  /*** CanvasState class **/
+  /************************/
+  function CanvasState(canvas) {
+    /*
+        CanvasState will need to do the following:
+          1. Track objects drawn to the canvas
+          2. Detect mousedown and mouseup events
+            2a. get mouseclick information -- find object in that location
+            2b. switch object color (black->white || white->black)
+          3. Part 2 will need to make up for offsets to give proper click coords
+     */
+    var myState = this; //@lyle: what is this really doing?
+    var mx, my;
 
-  /* Algo idea: I want to separate the canvas into squares, like a chess board.
-      This will require (given a canvas with nxn dimensions) dividing n by divisor d
-      to have mxm dimensions of each square.
-      (if n = 100 and i = 10, n/i gives a 10X10 square)
-   */
-  function drawSquares() {
+    // 1. Track object drawn to the canvas
+    myState.shapes = [];
+
+    // 2. Detect events
+    canvas.addEventListener('mousedown', function(e) {
+      var mouse = myState.getMouse(e);
+      mx = mouse.x;
+      my = mouse.y;
+      for (var i = 0; i < myState.shapes.length; i++) {
+        if (myState.shapes[i] !== undefined) {
+          if (mx >= myState.shapes[i].x && mx < myState.shapes[i].x + 40) {
+            if (my >= myState.shapes[i].y && my < myState.shapes[i].y + 40) {
+              myState.flipColor(myState.shapes[i]);
+              drawSquares();
+            }
+          }
+        }
+      }
+    });
+  }
+
+  CanvasState.prototype.getMouse = function(e) {
+    return {x: e.offsetX, y: e.offsetY};
+  };
+
+  CanvasState.prototype.flipColor = function(shape) {
+    if (shape.fillColor == "#000000") {
+      shape.fillColor = "#ffffff";
+    } else {
+      shape.fillColor = "#000000";
+    }
+  };
+
+  CanvasState.prototype.contains = function(shape) {
+    if (shape !== undefined) {
+
+    }
+  };
+
+  function createSquares() {
     var n = canvas.height;
     var d = 10;
     var m = n / d;
@@ -43,25 +91,27 @@
     for (var i = 0; i < n; i+=m) {
       for (var j = 0; j < n; j+=m) {
         ctx.fillStyle = (count % 2 == 0) ? blackFill : whiteFill;
-        myArray[count] = new Square(i, j, m, m, ctx.fillStyle);
-        myArray[count].draw(ctx);
+        myState.shapes[count] = new Square(i, j, m, m, ctx.fillStyle);
         count++;
       }
       count++;
     }
   }
 
-  /* Now I want to click on a spot on the game board and it to tell me the fill color
-      of that area.
-      To do this, I must store the grid data as I drawSquares().
-   */
-
+  function drawSquares() {
+    for (var i = 0; i < myState.shapes.length; i++) {
+      if (myState.shapes[i] !== undefined) {
+        myState.shapes[i].draw(ctx);
+      }
+    }
+  }
 
   var canvas = document.getElementById('canvas');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
   // canvas.onclick = function() { alert('cclick'); };
+  var myState = new CanvasState(canvas);
+  createSquares();
   drawSquares();
-
 })();
