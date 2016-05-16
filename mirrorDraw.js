@@ -72,7 +72,7 @@
   CanvasState.prototype.mirrorAction = function(x, y) {
     // Detect change on any object, find its "mirror" object across the y-axis
     // and affect the change there as well.
-    var diff = ((canvas.width / 2)) - x;
+    var diff = (canvas.width / 2) - x;
     var mirrorX = (canvas.width / 2) + (diff - 1); // (diff -1 ) keeps mirrorX in bounds
     var mirrorShape = myState.contains(mirrorX, y);
     if (mirrorShape != -1) {
