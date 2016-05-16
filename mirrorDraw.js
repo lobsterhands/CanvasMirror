@@ -110,12 +110,15 @@
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
-  var sqRoot = 13;
+  var sqRoot = 32;
   var canvasDim = canvas.width;
+
+  // ensure dimensions align for pixel-perfection
   while (canvasDim % sqRoot !== 0) {
     canvasDim++;
   }
-  canvas.width = canvas.height = canvasDim; // ensure dimensions align for pixel-perfection
+  canvas.width = canvas.height = canvasDim;
+
   var gridSize = Math.ceil(canvas.width/sqRoot);
   var myState = new CanvasState(canvas);
   myState.createSquares();
