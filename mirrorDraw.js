@@ -8,11 +8,11 @@
   /***** Square class *****/
   /************************/
   function Square(x, y, w, h, fillColor) {
-    this.x = x || 0;
+    this.x = x || 0; // default to 0 if no x provided
     this.y = y || 0;
     this.w = w || 1;
     this.h = h || 1;
-    this.fillColor = fillColor || "#FF0000";
+    this.fillColor = fillColor || "#FFFFFF";
   }
 
   Square.prototype.draw = function(ctx) {
@@ -24,27 +24,32 @@
   /*** CanvasState class **/
   /************************/
   function CanvasState(canvas) {
-    var myState = this; //@lyle: using 'var myState = this; allows me to use
+    var myState = this;
 
-    // 1. Track object drawn to the canvas
+    // Track object drawn to the canvas
     myState.shapes = [];
 
-    // 2. Detect events
+    // Detect events
     canvas.addEventListener('mousedown', function(e) {
       var mouse = myState.getMouse(e);
       var mx = mouse.x;
       var my = mouse.y;
 
-      var shape = myState.contains(mx, my);
+      var shape = myState.getShapeIndexAt(mx, my);
       if (shape != -1) {
-        myState.mirrorAction(mx, my);
+        var mirrorShape = myState.getMirror(shape, sqRoot);
+        if (mirrorShape != shape) {
+          // if board is odd-numbered, a shape in the center column has itself as a mirror
+          myState.flipColor(myState.shapes[mirrorShape]);
+        }
         myState.flipColor(myState.shapes[shape]);
-        drawSquares();
+        ctx.clearRect(0, 0, canvasDim, canvasDim); // clear board
+        drawSquares(); // draw board
       }
     });
   }
 
-  CanvasState.prototype.contains = function(x, y) {
+  CanvasState.prototype.getShapeIndexAt = function(x, y) {
     for (var i = 0; i < myState.shapes.length; i++) {
       if (myState.shapes[i] !== undefined) {
         if (x >= myState.shapes[i].x && x < myState.shapes[i].x + gridSize) {
@@ -69,20 +74,17 @@
     }
   };
 
-  CanvasState.prototype.mirrorAction = function(x, y) {
-    // Detect change on any object, find its "mirror" object across the y-axis
-    // and affect the change there as well.
-    console.log('x', x);
-    console.log('y', y);
-    var diff = (canvas.width / 2) - x;
-    var mirrorX = (canvas.width / 2) + (diff - 1); // (diff -1 ) keeps mirrorX in bounds
-    var mirrorShape = myState.contains(mirrorX, y);
-    if (mirrorShape != -1) {
-      myState.flipColor(myState.shapes[mirrorShape]);
+  CanvasState.prototype.getMirror = function(index, n) {
+    // Return a given square's mirrored square (across the y-axis)
+    if (index === 0) {
+      return Math.floor(n * (n-1));
     }
+
+    var nOrZero = (index % n === 0) ? n : 0;
+    return n*n - (n * (Math.ceil(index / n))) + (index % n) - nOrZero;
   };
 
-  function createSquares() {
+  CanvasState.prototype.createSquares = function() {
     var count = 0;
     for (var i = 0; i < canvasDim ; i+=gridSize) {
       for (var j = 0; j < canvasDim; j+=gridSize) {
@@ -90,9 +92,8 @@
         myState.shapes[count] = new Square(i, j, gridSize, gridSize, ctx.fillStyle);
         count++;
       }
-      count++;
     }
-  }
+  };
 
   function drawSquares() {
     for (var i = 0; i < myState.shapes.length; i++) {
@@ -102,37 +103,21 @@
     }
   }
 
+  /************************/
+  /***  **/
+  /************************/
   var canvas = document.getElementById('canvas');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
+  var sqRoot = 13;
   var canvasDim = canvas.width;
-  var gridSize = canvas.width/32; // Let the user decide the dimensions of the squares
-  var myState = new CanvasState(canvas);
-  createSquares();
-  drawSquares();
-  for (var i = 0; i < myState.shapes.length; i++) {
-    console.log(myState.shapes[i]);
+  while (canvasDim % sqRoot !== 0) {
+    canvasDim++;
   }
+  canvas.width = canvas.height = canvasDim; // ensure dimensions align for pixel-perfection
+  var gridSize = Math.ceil(canvas.width/sqRoot);
+  var myState = new CanvasState(canvas);
+  myState.createSquares();
+  drawSquares();
 })();
-
-// @lyle: at gridSize = canvas.width/32, I got a "wrong mirror" bug to show
-// @lyle: create test (either for mirror flipping accuracy) or just increment along the
-// x-axis and see where errors occur
-
-/*
-
- function getMirror(index, n) {
- if (index === 0) {
- return (n*n - n);
- }
-
- var quickFix = (index % n === 0) ? -n : 0;
- return n*n - (n * (Math.ceil(index / n))) + (index % n) + quickFix;
- }
-
- for (var i = 0; i < 16; i++) {
- console.log('i ' + i + ": " + getMirror(i, 4));	
- }
- 
- */
