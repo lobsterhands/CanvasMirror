@@ -95,6 +95,9 @@
     }
   };
 
+  /************************/
+  /*****   Helpers    *****/
+  /************************/
   function drawSquares() {
     for (var i = 0; i < myState.shapes.length; i++) {
       if (myState.shapes[i] !== undefined) {
@@ -110,7 +113,7 @@
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
   }
-  var sqRoot = 21;
+  var sqRoot = 16;
   var canvasDim = canvas.width;
 
   // ensure dimensions align for pixel-perfection
@@ -120,7 +123,6 @@
   canvas.width = canvas.height = canvasDim;
 
   var gridSize = canvas.width/sqRoot;
-  console.log(gridSize);
   var myState = new CanvasState(canvas);
   myState.createSquares();
   drawSquares();
