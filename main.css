@@ -1,7 +1,11 @@
 canvas {
     border: 1px solid black;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 canvas:hover {
     cursor: crosshair;
 }
+
