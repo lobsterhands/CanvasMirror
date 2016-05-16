@@ -104,7 +104,7 @@
   }
 
   /************************/
-  /***  **/
+  /****   MAIN EVENT   ****/
   /************************/
   var canvas = document.getElementById('canvas');
   if (canvas.getContext) {
