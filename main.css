@@ -1,11 +1,29 @@
 canvas {
+    text-align: center;
     border: 1px solid black;
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 canvas:hover {
     cursor: crosshair;
 }
 
+#wrapper {
+    min-height: 100%;
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 5%;
+    clear: both;
+}
+
+h1 {
+    text-align: center;
+}
