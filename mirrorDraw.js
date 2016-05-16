@@ -4,14 +4,6 @@
  */
 
 (function(){
-  var debug = true;
-  // var debug = false;
-
-  function log(arg) {
-    if (debug)
-      console.log(arg);
-  }
-
   /************************/
   /***** Square class *****/
   /************************/
@@ -27,20 +19,12 @@
     ctx.fillStyle = this.fillColor;
     ctx.fillRect(this.x, this.y, this.w, this.h);
   };
+
   /************************/
   /*** CanvasState class **/
   /************************/
   function CanvasState(canvas) {
-    /*
-        CanvasState will need to do the following:
-          1. Track objects drawn to the canvas
-          2. Detect mousedown and mouseup events
-            2a. get mouseclick information -- find object in that location
-            2b. switch object color (black->white || white->black)
-          3. Part 2 will need to make up for offsets to give proper click coords
-     */
-    var myState = this; //@lyle: what is this really doing?
-    var mx, my;
+    var myState = this; //@lyle: using 'var myState = this; allows me to use
 
     // 1. Track object drawn to the canvas
     myState.shapes = [];
@@ -48,20 +32,12 @@
     // 2. Detect events
     canvas.addEventListener('mousedown', function(e) {
       var mouse = myState.getMouse(e);
-      mx = mouse.x;
-      my = mouse.y;
-
-      // MirrorAction prototype
-        log('mirror across y-axis');
-        var diff = (canvas.width / 2) - mx;
-        var mirrorX = (canvas.width / 2) + diff;
-        var mirrorShape = myState.contains(mirrorX, my);
-        if (mirrorShape) {
-          myState.flipColor(myState.shapes[mirrorShape]);
-      }
+      var mx = mouse.x;
+      var my = mouse.y;
 
       var shape = myState.contains(mx, my);
       if (shape != -1) {
+        myState.mirrorAction(mx, my);
         myState.flipColor(myState.shapes[shape]);
         drawSquares();
       }
@@ -78,7 +54,7 @@
         }
       }
     }
-    return -1; // Error
+    return -1; // Error: no shape found
   };
 
   CanvasState.prototype.getMouse = function(e) {
@@ -93,19 +69,22 @@
     }
   };
 
-  CanvasState.prototype.mirrorAction = function() {
+  CanvasState.prototype.mirrorAction = function(x, y) {
     // Detect change on any object, find its "mirror" object across the y-axis
     // and affect the change there as well.
+    var diff = ((canvas.width / 2)) - x;
+    var mirrorX = (canvas.width / 2) + (diff - 1); // (diff -1 ) keeps mirrorX in bounds
+    var mirrorShape = myState.contains(mirrorX, y);
+    if (mirrorShape != -1) {
+      myState.flipColor(myState.shapes[mirrorShape]);
+    }
   };
 
-
   function createSquares() {
-    var blackFill = "rgb(0,0,0)";
-    var whiteFill = "rgb(255, 255, 255)";
     var count = 0;
     for (var i = 0; i < canvasDim ; i+=gridSize) {
       for (var j = 0; j < canvasDim; j+=gridSize) {
-        ctx.fillStyle = (count % 2 == 0) ? blackFill : whiteFill;
+        ctx.fillStyle = "#ffffff";
         myState.shapes[count] = new Square(i, j, gridSize, gridSize, ctx.fillStyle);
         count++;
       }
