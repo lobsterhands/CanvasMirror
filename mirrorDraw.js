@@ -72,6 +72,8 @@
   CanvasState.prototype.mirrorAction = function(x, y) {
     // Detect change on any object, find its "mirror" object across the y-axis
     // and affect the change there as well.
+    console.log('x', x);
+    console.log('y', y);
     var diff = (canvas.width / 2) - x;
     var mirrorX = (canvas.width / 2) + (diff - 1); // (diff -1 ) keeps mirrorX in bounds
     var mirrorShape = myState.contains(mirrorX, y);
@@ -105,8 +107,32 @@
     var ctx = canvas.getContext('2d');
   }
   var canvasDim = canvas.width;
-  var gridSize = canvas.width/20;
+  var gridSize = canvas.width/32; // Let the user decide the dimensions of the squares
   var myState = new CanvasState(canvas);
   createSquares();
   drawSquares();
+  for (var i = 0; i < myState.shapes.length; i++) {
+    console.log(myState.shapes[i]);
+  }
 })();
+
+// @lyle: at gridSize = canvas.width/32, I got a "wrong mirror" bug to show
+// @lyle: create test (either for mirror flipping accuracy) or just increment along the
+// x-axis and see where errors occur
+
+/*
+
+ function getMirror(index, n) {
+ if (index === 0) {
+ return (n*n - n);
+ }
+
+ var quickFix = (index % n === 0) ? -n : 0;
+ return n*n - (n * (Math.ceil(index / n))) + (index % n) + quickFix;
+ }
+
+ for (var i = 0; i < 16; i++) {
+ console.log('i ' + i + ": " + getMirror(i, 4));	
+ }
+ 
+ */
