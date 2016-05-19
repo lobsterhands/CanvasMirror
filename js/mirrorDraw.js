@@ -91,7 +91,7 @@
   /************************/
   /***** CanvasState ******/
   /*** Static Functions ***/
-  /************************/  
+  /************************/
   CanvasState.getMouse = function(e) {
     return {x: e.offsetX, y: e.offsetY};
   };
@@ -114,7 +114,7 @@
     return numRows*numRows - (numRows * (Math.ceil(index / numRows))) +
         (index % numRows) - nOrZero;
   };
-  
+
   /************************/
   /****   MAIN EVENT   ****/
   /************************/
