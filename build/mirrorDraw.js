@@ -29,5 +29,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
        * With lots of help from: www.simonsarris.com/blog/510-making-html5-canvas-useful
        */
 // import name from './Square';
-
-//# sourceMappingURL=mirrorDraw-compiled.js.map

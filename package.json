@@ -4,6 +4,8 @@
   "description": "Mirror Drawing is the result of playing with HTML5 Canvas with one idea in mind: click a square on a grid and have that square and it's mirror-square (across the y-axis) change colors together.",
   "main": "index.js",
   "scripts": {
+    "build": "babel js -d build",
+    "browserbuild": "browserify ./build/mirrorDraw.js > ./build/mirrorDraw_browser.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +19,8 @@
   },
   "homepage": "https://github.com/lobsterhands/CanvasMirror#readme",
   "devDependencies": {
-    "babel-preset-es2015": "^6.9.0"
+    "babel-cli": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "browserify": "^13.0.0"
   }
 }

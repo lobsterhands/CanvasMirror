@@ -4,7 +4,9 @@ var _CanvasData = require('./CanvasData');
 
 var _CanvasData2 = _interopRequireDefault(_CanvasData);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 (function () {
   /************************/
